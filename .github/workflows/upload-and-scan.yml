@@ -20,6 +20,7 @@ jobs:
           
       - name: Veracode Upload And Scan
         uses: veracode/veracode-uploadandscan-action@0.2.6
+        shell: pwd
         with:
           appname: 'VeraDemo Actions'
           createprofile: false
