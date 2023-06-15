@@ -19,5 +19,5 @@ jobs:
           appname: 'VeraDemo Actions'
           createprofile: false
           filepath: 'app/target/test-docker-0.0.1-SNAPSHOT.jar'
-          vid: '${{ secrets.API_ID }}'
-          vkey: '${{ secrets.API_KEY }}'
+          vid: '${{ secrets.VERACODE_ID }}'
+          vkey: '${{ secrets.VERACODE_KEY }}'
