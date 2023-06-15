@@ -1,37 +1,23 @@
-name: Veracode Static Scan
-
-# Controls when the action will run. 
-on:
-  # Triggers the workflow on push or pull request events but only for the master branch
-  push:
-    branches: [ master, release/* ]
-  pull_request:
-    branches: [ master, develop, main, release/* ]
-
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+name: Veracode Static Analysis Demo
+on: workflow_dispatch
+    
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
+  static_analysis:
+    name: Static Analysis
     runs-on: ubuntu-latest
-    # Steps represent a sequence of tasks that will be executed as part of the job
+    
     steps:
       - name: Check out main branch
         uses: actions/checkout@v2
-      - name: create dir prior
-        run: |
-          mkdir dls
-      - name: Download Veracode Wrapper
-        #working-directory: ./dls/
-        run: |
-          javawrapperversion=$(curl https://repo1.maven.org/maven2/com/veracode/vosp/api/wrappers/vosp-api-wrappers-java/maven-metadata.xml | grep latest |  cut -d '>' -f 2 | cut -d '<' -f 1)
-          echo "javawrapperversion: $javawrapperversion"
-          curl -sS -o VeracodeJavaAPI.jar "https://repo1.maven.org/maven2/com/veracode/vosp/api/wrappers/vosp-api-wrappers-java/$javawrapperversion/vosp-api-wrappers-java-$javawrapperversion.jar"
-      - name: Run Upload and Scan
-        #working-directory: ./dls/
-        continue-on-error: true
-        run: |
-          java -jar VeracodeJavaAPI.jar -action uploadandscan -vid ${{secrets.VERACODE_ID}} -vkey ${{secrets.VERACODE_KEY}} -appname ${{ github.repository }} -createprofile true -criticality VeryHigh -sandboxname sandboxA -createsandbox true -version ${{ github.run_id }} -scantimeout 30 -selectedpreviously true -filepath ./target/test-docker-0.0.1-SNAPSHOT.jar
+        
+      #- name: Build with Maven # Compiling the .war binary from the checked out repo source code to upload to the scanner in the next step
+      #  run: mvn -B package --file app/pom.xml
+          
+      - name: Veracode Upload And Scan
+        uses: veracode/veracode-uploadandscan-action@0.2.6
+        with:
+          appname: 'VeraDemo Actions'
+          createprofile: false
+          filepath: 'app/target/test-docker-0.0.1-SNAPSHOT.jar'
+          vid: '${{ secrets.API_ID }}'
+          vkey: '${{ secrets.API_KEY }}'
