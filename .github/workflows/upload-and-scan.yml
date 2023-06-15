@@ -16,6 +16,9 @@ jobs:
         
       #- name: Build with Maven # Compiling the .war binary from the checked out repo source code to upload to the scanner in the next step
       #  run: mvn -B package --file app/pom.xml
+      
+      - name: Print files
+        run: ls & pwd
           
       - name: Veracode Upload And Scan
         uses: veracode/veracode-uploadandscan-action@0.2.6
